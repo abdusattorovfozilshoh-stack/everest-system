@@ -24,55 +24,60 @@ if (isPostgres) {
         ssl: { rejectUnauthorized: false }
     });
 
-    // SQLite callback API ni PostgreSQL Promise API ga moslash
+    // Asynchronous initialization guarantee
+    let initPromise = null;
+    function ensureInit() {
+        if (!initPromise) {
+            initPromise = initPostgresDB(pool).catch(e => console.error("Init Error:", e));
+        }
+        return initPromise;
+    }
+
     db = {
         isDummy: false,
 
-        // ? ni $1, $2, ... ga o'zgartirish (SQLite → PostgreSQL)
         _convertQuery(query) {
             let i = 0;
             return query.replace(/\?/g, () => `$${++i}`);
         },
 
-        // Ko'p natija
         all(query, params, cb) {
-            const pgQuery = this._convertQuery(query);
-            pool.query(pgQuery, params || [])
-                .then(result => cb(null, result.rows))
-                .catch(err => { console.error('PG all error:', err.message); cb(err, []); });
+            ensureInit().then(() => {
+                const pgQuery = this._convertQuery(query);
+                pool.query(pgQuery, params || [])
+                    .then(result => { if(cb) cb(null, result.rows); })
+                    .catch(err => { console.error('PG all error:', err.message); if(cb) cb(err, []); });
+            });
         },
 
-        // Bitta natija
         get(query, params, cb) {
-            const pgQuery = this._convertQuery(query);
-            pool.query(pgQuery, params || [])
-                .then(result => cb(null, result.rows[0] || null))
-                .catch(err => { console.error('PG get error:', err.message); cb(err, null); });
+            ensureInit().then(() => {
+                const pgQuery = this._convertQuery(query);
+                pool.query(pgQuery, params || [])
+                    .then(result => { if(cb) cb(null, result.rows[0] || null); })
+                    .catch(err => { console.error('PG get error:', err.message); if(cb) cb(err, null); });
+            });
         },
 
-        // INSERT / UPDATE / DELETE
         run(query, params, cb) {
-            // AUTOINCREMENT → RETURNING id
-            let pgQuery = this._convertQuery(query);
-            const isInsert = pgQuery.trim().toUpperCase().startsWith('INSERT');
-            if (isInsert && !pgQuery.toUpperCase().includes('RETURNING')) {
-                pgQuery += ' RETURNING id';
-            }
+            ensureInit().then(() => {
+                let pgQuery = this._convertQuery(query);
+                const isInsert = pgQuery.trim().toUpperCase().startsWith('INSERT');
+                if (isInsert && !pgQuery.toUpperCase().includes('RETURNING')) {
+                    pgQuery += ' RETURNING id';
+                }
 
-            pool.query(pgQuery, params || [])
-                .then(result => {
-                    const lastID = isInsert && result.rows[0] ? result.rows[0].id : 0;
-                    if (cb) cb.call({ lastID, changes: result.rowCount }, null);
-                })
-                .catch(err => { console.error('PG run error:', err.message, pgQuery); if (cb) cb(err); });
+                pool.query(pgQuery, params || [])
+                    .then(result => {
+                        const lastID = isInsert && result.rows[0] ? result.rows[0].id : 0;
+                        if (cb) cb.call({ lastID, changes: result.rowCount }, null);
+                    })
+                    .catch(err => { console.error('PG run error:', err.message, pgQuery); if (cb) cb(err); });
+            });
         },
 
-        // Serializatsiya (PostgreSQL da shart emas, lekin eski kod bilan mos)
         serialize(cb) { if (cb) cb(); }
     };
-
-    // Jadvallarni yaratish
-    initPostgresDB(pool);
 
 } else {
     // ==========================================
