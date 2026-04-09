@@ -1,0 +1,31 @@
+<service>
+	<id>everestserver.exe</id>
+	<name>EverestServer</name>
+	<description>Everest O&apos;quv Markazi Boshqaruv Tizimi Serveri</description>
+	<executable>C:\Program Files\nodejs\node.exe</executable>
+	<argument>--harmony</argument>
+	<argument>C:\Users\Fozilshox\OneDrive\Desktop\EVEREST\node_modules\node-windows\lib\wrapper.js</argument>
+	<argument>--file</argument>
+	<argument>c:\Users\Fozilshox\OneDrive\Desktop\EVEREST\server.js</argument>
+	<argument>--scriptoptions=</argument>
+	<argument>--log</argument>
+	<argument>EverestServer wrapper</argument>
+	<argument>--grow</argument>
+	<argument>0.25</argument>
+	<argument>--wait</argument>
+	<argument>5</argument>
+	<argument>--maxrestarts</argument>
+	<argument>10</argument>
+	<argument>--abortonerror</argument>
+	<argument>n</argument>
+	<argument>--stopparentfirst</argument>
+	<argument>undefined</argument>
+	<logmode>rotate</logmode>
+	<stoptimeout>30sec</stoptimeout>
+	<serviceaccount>
+		<domain>ABDUSATTOR0FF</domain>
+		<user>LocalSystem</user>
+		<password></password>
+	</serviceaccount>
+	<workingdirectory>C:\Users\Fozilshox\OneDrive\Desktop\EVEREST</workingdirectory>
+</service>

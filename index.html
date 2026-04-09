@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Everest O'quv Markazi — Kirish</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0f1c2e;
+            --navy2: #162740;
+            --gold: #c9a84c;
+            --gold2: #e8c96e;
+            --cream: #f5f0e8;
+            --light: #fdfbf7;
+            --muted: #8a94a6;
+            --border: #d6ccb8;
+            --error: #c0392b;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--navy);
+            color: var(--navy);
+        }
+
+        /* ── Layout ── */
+        .wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+
+        /* ── LEFT PANEL ── */
+        .left {
+            position: relative;
+            background: var(--navy2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 48px;
+            overflow: hidden;
+        }
+
+        /* geometric decoration */
+        .left::before {
+            content: '';
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border: 1px solid rgba(201, 168, 76, .15);
+            border-radius: 50%;
+            top: -80px;
+            left: -80px;
+        }
+
+        .left::after {
+            content: '';
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border: 1px solid rgba(201, 168, 76, .1);
+            border-radius: 50%;
+            bottom: -60px;
+            right: -60px;
+        }
+
+        .left-inner {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 380px;
+        }
+
+        .mountain-svg {
+            width: 120px;
+            margin: 0 auto 28px;
+            display: block;
+            filter: drop-shadow(0 4px 24px rgba(201, 168, 76, .3));
+        }
+
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--gold2);
+            letter-spacing: .5px;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .brand-sub {
+            font-size: .95rem;
+            color: var(--muted);
+            letter-spacing: .3px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* divider line */
+        .divider {
+            width: 48px;
+            height: 2px;
+            background: var(--gold);
+            margin: 0 auto 36px;
+            border-radius: 2px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 36px;
+            justify-content: center;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: .75rem;
+            color: var(--muted);
+            margin-top: 2px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+
+        /* ── RIGHT PANEL ── */
+        .right {
+            background: var(--light);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 48px;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-header {
+            margin-bottom: 36px;
+        }
+
+        .form-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            color: var(--navy);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .form-header p {
+            font-size: .9rem;
+            color: var(--muted);
+        }
+
+        /* avatar upload */
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 28px;
+            padding: 16px 20px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            background: var(--cream);
+            cursor: pointer;
+            transition: border-color .2s, background .2s;
+        }
+
+        .avatar-section:hover {
+            border-color: var(--gold);
+            background: #fdf7ec;
+        }
+
+        .avatar-preview {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-preview svg {
+            opacity: .4;
+        }
+
+        .avatar-text {
+            font-size: .85rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .avatar-text strong {
+            display: block;
+            color: var(--navy);
+            font-size: .9rem;
+            margin-bottom: 2px;
+        }
+
+        #avatarInput {
+            display: none;
+        }
+
+        /* fields */
+        .field {
+            margin-bottom: 20px;
+            position: relative; /* Tugma uchun asos */
+        }
+
+        .field label {
+            display: block;
+            font-size: .8rem;
+            font-weight: 600;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            color: var(--navy);
+            margin-bottom: 7px;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: block;
+            padding-right: 20px; /* Click maydonini o'ng tomonga kengaytirdik */
+            margin-right: -20px; /* Layout o'zgarib ketmasligi uchun kompensatsiya */
+        }
+
+        .input-wrap svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: .35;
+            pointer-events: none;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 12px 42px 12px 42px; /* O'ng tomondan ham joy qoldirdik */
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .95rem;
+            color: var(--navy);
+            background: #fff;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .field input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, .12);
+        }
+
+        .field input.error {
+            border-color: var(--error);
+        }
+
+        .field-error {
+            font-size: .78rem;
+            color: var(--error);
+            margin-top: 5px;
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        /* show password toggle */
+        .toggle-pass {
+            position: absolute;
+            right: -35px; /* Borderdan 0.2sm tashqarida */
+            bottom: 6px; /* Input markaziga to'g'rilaymiz */
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            padding: 12px; /* Click maydonini sezilarli darajada kengaytirdik */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: color 0.2s;
+            pointer-events: auto;
+        }
+        
+        .toggle-pass:hover {
+            color: var(--gold);
+        }
+
+        /* remember + forgot */
+        .row-extra {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: .85rem;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .remember input[type=checkbox] {
+            accent-color: var(--gold);
+            width: 15px;
+            height: 15px;
+        }
+
+        .forgot {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot:hover {
+            text-decoration: underline;
+        }
+
+        /* submit */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--navy);
+            color: var(--gold2);
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: .5px;
+            cursor: pointer;
+            transition: background .2s, transform .1s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            background: #1a2f4a;
+        }
+
+        .btn-login:active {
+            transform: scale(.98);
+        }
+
+        .btn-login.loading {
+            pointer-events: none;
+            opacity: .8;
+        }
+
+        .btn-login .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, .3);
+            border-top-color: var(--gold2);
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            margin: 0 auto;
+        }
+
+        .btn-login.loading .btn-text {
+            display: none;
+        }
+
+        .btn-login.loading .spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* footer note */
+        .form-footer {
+            text-align: center;
+            margin-top: 28px;
+            font-size: .82rem;
+            color: var(--muted);
+        }
+
+        .form-footer a {
+            color: var(--gold);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        /* toast */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--navy);
+            color: var(--gold2);
+            padding: 14px 22px;
+            border-radius: 10px;
+            font-size: .9rem;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .25);
+            opacity: 0;
+            transform: translateY(12px);
+            transition: all .3s;
+            pointer-events: none;
+            border-left: 3px solid var(--gold);
+        }
+        
+        .status-badge {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e0;
+        }
+        
+        .status-online { border-color: #2ecc71; color: #27ae60; }
+        .status-online .status-dot { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
+        
+        .status-offline { border-color: #e74c3c; color: #c0392b; }
+        .status-offline .status-dot { background: #e74c3c; }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* role selector */
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .role-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+            font-weight: 500;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .role-btn:hover {
+            border-color: var(--gold);
+            color: var(--navy);
+        }
+
+        .role-btn.active {
+            border-color: var(--gold);
+            background: #fdf7ec;
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        .role-btn.active svg {
+            stroke: var(--gold);
+        }
+
+
+        .form-card {
+            animation: fadeUp .5s ease both;
+        }
+
+        .left-inner {
+            animation: fadeUp .5s .1s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* responsive */
+        @media (max-width: 768px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .left {
+                padding: 48px 28px;
+                min-height: 260px;
+            }
+
+            .brand-title {
+                font-size: 2rem;
+            }
+
+            .right {
+                padding: 40px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body onload="initStatusCheck()">
+
+    <div class="status-badge" id="serverStatus">
+        <div class="status-dot"></div>
+        <span id="statusText">Tekshirilmoqda...</span>
+    </div>
+
+    <div class="wrapper">
+
+        <!-- LEFT -->
+        <div class="left">
+            <div class="left-inner">
+                <!-- Mountain SVG logo -->
+                <svg class="mountain-svg" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="60,4 100,72 20,72" fill="none" stroke="#c9a84c" stroke-width="2.5"
+                        stroke-linejoin="round" />
+                    <polygon points="60,4 80,40 40,40" fill="rgba(201,168,76,.15)" />
+                    <polyline points="30,72 52,34 60,44 70,28 90,72" fill="none" stroke="#c9a84c" stroke-width="1.5"
+                        stroke-linejoin="round" opacity=".5" />
+                    <circle cx="60" cy="4" r="3" fill="#e8c96e" />
+                </svg>
+
+                <h1 class="brand-title">Everest<br />O'quv Markazi</h1>
+                <p class="brand-sub">Bilim cho'qqisiga birga yetamiz.<br />Professional ta'lim platformasi.</p>
+                <div class="divider"></div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-num">1200+</div>
+                        <div class="stat-label">O'quvchi</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num">48</div>
+                        <div class="stat-label">O'qituvchi</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num">96%</div>
+                        <div class="stat-label">Muvaffaqiyat</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right">
+            <div class="form-card">
+
+                <div class="form-header">
+                    <h2>Xush kelibsiz</h2>
+                    <p>Admin yoki o'qituvchi sifatida kiring</p>
+                </div>
+
+                <!-- Role selector -->
+                <div class="role-selector" id="roleSelector">
+                    <button type="button" class="role-btn active" data-role="admin">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z" />
+                        </svg>
+                        Admin
+                    </button>
+                    <button type="button" class="role-btn" data-role="teacher">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" />
+                            <path d="M8 21h8M12 17v4" />
+                        </svg>
+                        O'qituvchi
+                    </button>
+                </div>
+
+                <!-- Login form -->
+                <form id="loginForm" novalidate>
+
+                    <div class="field">
+                        <label for="username">Foydalanuvchi nomi</label>
+                        <div class="input-wrap">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                            </svg>
+                            <input type="text" id="username" placeholder="Foydalanuvchi nomini kiriting"
+                                autocomplete="username" />
+                        </div>
+                        <div class="field-error" id="usernameErr">Foydalanuvchi nomini kiriting</div>
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Parol</label>
+                        <div class="input-wrap">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            <input type="password" id="password" placeholder="Parolingizni kiriting"
+                                autocomplete="current-password" />
+                        </div>
+                        <button type="button" class="toggle-pass" id="togglePass" title="Ko'rsatish">
+                            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                        <div class="field-error" id="passwordErr">Parolni kiriting</div>
+                    </div>
+
+                    <div class="row-extra">
+                        <label class="remember">
+                            <input type="checkbox" id="remember" /> Eslab qolish
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <span class="btn-text">Kirish</span>
+                        <div class="spinner"></div>
+                    </button>
+
+                </form>
+
+                <div class="form-footer">
+                    Kirish ma'lumotlari <strong>admin</strong> tomonidan beriladi
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast xabarlari uchun -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 1. api.js va localstorage.js AVVAL yuklanishi SHART -->
+    <script src="api.js"></script>
+    <script src="localstorage.js"></script>
+
+    <!-- 2. Allaqachon login qilingan bo'lsa — to'g'ridan-to'g'ri yo'naltirish -->
+    <script>
+        (function () {
+            var session = loadSession();
+            if (session && session.role === 'admin') { window.location.replace('admin.html'); }
+            if (session && session.role === 'teacher') { window.location.replace('teacher.html'); }
+        })();
+    </script>
+
+    <!-- 3. Login sahifasi logikasi -->
+    <script src="script.js" defer></script>
+
+</body>
+
+</html>

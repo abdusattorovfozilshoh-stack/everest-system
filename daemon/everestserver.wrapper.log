@@ -1,0 +1,2 @@
+2026-04-07 14:31:45 - Starting C:\Program Files\nodejs\node.exe  --harmony C:\Users\Fozilshox\OneDrive\Desktop\EVEREST\node_modules\node-windows\lib\wrapper.js --file c:\Users\Fozilshox\OneDrive\Desktop\EVEREST\server.js --scriptoptions= --log "EverestServer wrapper" --grow 0.25 --wait 5 --maxrestarts 10 --abortonerror n --stopparentfirst undefined
+2026-04-07 14:31:45 - Started 4600
