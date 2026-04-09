@@ -88,21 +88,25 @@ if (isVercel) {
     db = new JSONDatabase(jsonPath);
     initDefaultData();
 } else {
-    // LOCAL: Use real SQLite
     try {
+        console.log('Local: sqlite3 yuklanmoqda...');
         const sqlite3 = require('sqlite3').verbose();
         const dbPath = path.resolve(__dirname, '..', DB_NAME);
+        console.log('Local: Baza fayli:', dbPath);
         db = new sqlite3.Database(dbPath, (err) => {
-            if (err) console.error('SQLite local error:', err);
-            else {
+            if (err) {
+                console.error('SQLite local ulanishda xatolik:', err);
+            } else {
+                console.log('Local: Baza muvaffaqiyatli ulandi.');
                 db.serialize(() => {
+                    console.log('Local: Baza PRAGMA sozlanmoqda...');
                     db.run('PRAGMA foreign_keys = ON');
                     initDB(db);
                 });
             }
         });
     } catch (e) {
-        console.error('Local SQLite load failed, falling back to JSON');
+        console.error('Local SQLite load failed, falling back to JSON:', e);
         db = new JSONDatabase(path.resolve(__dirname, '..', JSON_DB_NAME));
     }
 }

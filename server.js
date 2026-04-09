@@ -28,10 +28,30 @@ const teacherRoutes = require('./routes/teacherRoutes');
 const groupRoutes = require('./routes/groupRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
+// Health Check
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        time: new Date().toISOString(),
+        env: process.env.NODE_ENV,
+        dbAvailable: !!db && !db.isDummy
+    });
+});
+
 app.use('/api', authRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/payments', paymentRoutes);
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('SERVER ERROR:', err);
+    res.status(500).json({ 
+        error: 'Ichki server xatosi', 
+        message: err.message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
+});
 
 // Start server
 if (process.env.NODE_ENV !== 'production' && require.main === module) {
