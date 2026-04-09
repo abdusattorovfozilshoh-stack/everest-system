@@ -3,7 +3,6 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.js" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/teacher", "destination": "/teacher.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/teacher", "destination": "/teacher.html" }
   ]
 }
