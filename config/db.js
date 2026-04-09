@@ -1,30 +1,48 @@
-const sqlite3 = require('sqlite3').verbose();
+let sqlite3;
+try {
+    sqlite3 = require('sqlite3').verbose();
+} catch (e) {
+    console.error('CRITICAL: sqlite3 native module yuklanmadi:', e.message);
+}
+
 const path = require('path');
 const fs = require('fs');
 
 const isVercel = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 const DB_NAME = 'db.sqlite';
 
-// Vercel-da /tmp papkasini ishlatamiz, chunki root read-only
+// Vercel-da /tmp papkasini ishlatamiz
 const dbPath = isVercel 
     ? path.join('/tmp', DB_NAME) 
-    : path.join(__dirname, '..', DB_NAME);
+    : path.resolve(__dirname, '..', DB_NAME);
 
 let db;
 
 function connectDB() {
+    if (!sqlite3) {
+        console.error('SQLite3 modulesi mavjud emas, dummy rejimga o\'tilmoqda.');
+        createDummyDB();
+        return;
+    }
+
     try {
-        // Vercel-da agar baza /tmp-da bo'lmasa, uni yaratishga tayyorlanamiz
         if (isVercel && !fs.existsSync(dbPath)) {
-            console.log('Vercel: Baza topilmadi, yangi yaratilmoqda...');
-            // Agar root-da baza bo'lsa, uni /tmp-ga nusxalashga harakat qilamiz
-            const sourcePath = path.join(process.cwd(), DB_NAME);
-            if (fs.existsSync(sourcePath)) {
-                try {
-                    fs.copyFileSync(sourcePath, dbPath);
-                    console.log('Vercel: Mavjud baza /tmp-ga nusxalandi.');
-                } catch (e) {
-                    console.error('Vercel: Nusxalashda xatolik:', e);
+            console.log('Vercel: Baza /tmp-da yo\'q, qidirilmoqda...');
+            const potentialPaths = [
+                path.join(process.cwd(), DB_NAME),
+                path.join(__dirname, '..', DB_NAME),
+                path.join(__dirname, DB_NAME)
+            ];
+            
+            for (const p of potentialPaths) {
+                if (fs.existsSync(p)) {
+                    try {
+                        fs.copyFileSync(p, dbPath);
+                        console.log('Vercel: Baza ' + p + ' dan /tmp-ga nusxalandi.');
+                        break;
+                    } catch (err) {
+                        console.error('Nusxalashda xato:', err);
+                    }
                 }
             }
         }
@@ -32,6 +50,7 @@ function connectDB() {
         db = new sqlite3.Database(dbPath, (err) => {
             if (err) {
                 console.error('Baza ulanishda xatolik:', err.message);
+                createDummyDB();
             } else {
                 console.log('Baza muvaffaqiyatli ulandi:', dbPath);
                 db.serialize(() => {
@@ -42,16 +61,20 @@ function connectDB() {
         });
 
     } catch (error) {
-        console.error('CRITICAL: Baza yuklanishda jiddiy xatolik:', error);
-        // Fallback dummy object
-        db = {
-            get: (q, p, cb) => (cb || p)(new Error("Database Error")),
-            run: (q, p, cb) => (cb || p)(new Error("Database Error")),
-            all: (q, p, cb) => (cb || p)(new Error("Database Error")),
-            serialize: (cb) => cb(),
-            prepare: () => ({ run: () => {}, finalize: () => {} })
-        };
+        console.error('Baza ulanishda jiddiy xatolik:', error);
+        createDummyDB();
     }
+}
+
+function createDummyDB() {
+    db = {
+        get: (q, p, cb) => (cb || p)(new Error("Database is not available (native module issue)")),
+        run: (q, p, cb) => (cb || p)(new Error("Database is not available (native module issue)")),
+        all: (q, p, cb) => (cb || p)(new Error("Database is not available (native module issue)")),
+        serialize: (cb) => cb(),
+        prepare: () => ({ run: () => {}, finalize: () => {} }),
+        isDummy: true
+    };
 }
 
 connectDB();
@@ -63,6 +86,7 @@ const DEFAULT_TEACHERS = [
 ];
 
 function initDB() {
+    if (db.isDummy) return;
     db.serialize(() => {
         db.run(`CREATE TABLE IF NOT EXISTS teachers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -94,6 +118,7 @@ function initDB() {
 }
 
 function initDefaultData() {
+    if (db.isDummy) return;
     const defaultCourses = JSON.stringify([
         { key: 'Beginner', fee: 500000 },
         { key: 'Elementary', fee: 550000 },
