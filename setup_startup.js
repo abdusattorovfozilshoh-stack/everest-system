@@ -4,7 +4,7 @@ const os = require('os');
 
 // Windows Startup papkasi yo'lini aniqlash
 const startupDir = path.join(os.homedir(), 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup');
-const projectDir = 'c:\\Users\\Fozilshox\\OneDrive\\Desktop\\EVEREST';
+const projectDir = __dirname;
 const batPath = path.join(projectDir, 'start_everest.bat');
 const vbsPath = path.join(startupDir, 'everest_launcher.vbs');
 

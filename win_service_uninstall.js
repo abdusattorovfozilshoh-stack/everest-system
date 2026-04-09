@@ -3,7 +3,7 @@ const Service = require('node-windows').Service;
 // Everest Server xizmatini o'chirish
 const svc = new Service({
   name: 'EverestServer',
-  script: 'c:\\Users\\Fozilshox\\OneDrive\\Desktop\\EVEREST\\server.js'
+  script: require('path').join(__dirname, 'server.js')
 });
 
 // "uninstall" hodisasi — xizmat o'chirib bo'linganda

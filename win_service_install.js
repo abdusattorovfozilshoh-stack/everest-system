@@ -4,7 +4,7 @@ const Service = require('node-windows').Service;
 const svc = new Service({
   name: 'EverestServer',
   description: 'Everest O\'quv Markazi Boshqaruv Tizimi Serveri',
-  script: 'c:\\Users\\Fozilshox\\OneDrive\\Desktop\\EVEREST\\server.js',
+  script: require('path').join(__dirname, 'server.js'),
   wait: 5,
   grow: .25,
   maxRestarts: 10
