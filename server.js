@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const db = require('./config/db');
 
 const app = express();
@@ -9,6 +10,29 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Log funksiyasi
+const logError = (err) => {
+    const timestamp = new Date().toISOString();
+    const logMessage = `[${timestamp}] SEVERE ERROR: ${err.stack || err}\n`;
+    try {
+        fs.appendFileSync(path.join(__dirname, 'error.log'), logMessage);
+    } catch (e) {
+        console.error('Logging failed:', e);
+    }
+};
+
+// Global xatoliklarni ushlash
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION:', err);
+    logError(err);
+    // Maslahat: Serverni qayta ishga tushirish kerak bo'lishi mumkin
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('UNHANDLED REJECTION:', reason);
+    logError(reason);
+});
 
 // Block access to sensitive files
 app.use((req, res, next) => {
@@ -46,6 +70,7 @@ app.use('/api/payments', paymentRoutes);
 // Global Error Handler
 app.use((err, req, res, next) => {
     console.error('SERVER ERROR:', err);
+    logError(err);
     res.status(500).json({ 
         error: 'Ichki server xatosi', 
         message: err.message,

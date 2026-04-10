@@ -24,6 +24,11 @@ if (isPostgres) {
         ssl: { rejectUnauthorized: false }
     });
 
+    pool.on('error', (err) => {
+        console.error('🐘 Unexpected error on idle client', err);
+        // Do not process.exit(1) here as it might be a temporary network issue
+    });
+
     // Asynchronous initialization guarantee
     let initPromise = null;
     function ensureInit() {
