@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -79,7 +80,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-if (process.env.NODE_ENV !== 'production' && require.main === module) {
+if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`Server http://localhost:${PORT} portida ishga tushdi.`);
     });

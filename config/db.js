@@ -14,9 +14,9 @@ let db;
 
 if (isPostgres) {
     // ==========================================
-    // NEON.TECH / PostgreSQL
+    // RAILWAY (Yoki boshqa) / PostgreSQL
     // ==========================================
-    console.log('🐘 PostgreSQL (Neon.tech) ulanmoqda...');
+    console.log('🐘 PostgreSQL ulanmoqda...');
     const { Pool } = require('pg');
 
     const pool = new Pool({
